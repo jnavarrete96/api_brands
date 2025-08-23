@@ -44,3 +44,19 @@ class BrandByOwnerView(APIView):
 
         serializer = BrandListSerializer(brands, many=True)
         return success_response(data=serializer.data)
+    
+
+class BrandDeleteView(APIView):
+    def delete(self, request, brand_id):
+        try:
+            brand = Brand.objects.select_related("owner").get(id=brand_id)
+            owner = brand.owner
+            brand.delete()
+
+            # Verificar si el owner tiene otras marcas
+            if not owner.brands.exists():
+                owner.delete()
+
+            return success_response(msg="Marca eliminada correctamente")
+        except Brand.DoesNotExist:
+            return error_response(msg="Marca no encontrada", status_code=status.HTTP_404_NOT_FOUND)
