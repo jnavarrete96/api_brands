@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
+    'django.contrib.staticfiles',
+    'drf_spectacular', 
     'brands',
 ]
 
@@ -52,6 +54,8 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.static',
+                'django.template.context_processors.debug',
             ],
         },
     },
@@ -89,7 +93,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -100,4 +104,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
     'UNAUTHENTICATED_USER': None,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Brands API',
+    'DESCRIPTION': 'Documentación interactiva de la API de marcas',
+    'VERSION': 'v1',
+    'CONTACT': {
+        'name': 'Juan Navarrete',
+        'email': 'navarrete0725@gmail.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
 }

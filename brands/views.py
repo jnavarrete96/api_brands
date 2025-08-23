@@ -1,13 +1,20 @@
 # brands/views.py
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .models import Brand
 from .serializers import BrandCreateSerializer, BrandSerializer, BrandListSerializer, BrandUpdateSerializer
 from .utils.responses import success_response, error_response
 
 class BrandCreateView(APIView):
+    @extend_schema(
+        summary="Crear una nueva marca",
+        description="Crea una marca asociada a un titular. Si el titular no existe, se crea automáticamente.",
+        request=BrandCreateSerializer,
+        responses={201: BrandSerializer, 409: None},
+        tags=["Marcas"]
+    )
     def post(self, request):
         serializer = BrandCreateSerializer(data=request.data)
         try:
@@ -28,6 +35,12 @@ class BrandCreateView(APIView):
         
 
 class BrandListView(APIView):
+    @extend_schema(
+        summary="Listar todas las marcas",
+        description="Devuelve una lista completa de marcas registradas junto con su titular.",
+        responses={200: BrandListSerializer(many=True)},
+        tags=["Marcas"]
+    )
     def get(self, request):
         brands = Brand.objects.select_related("owner").all()
         serializer = BrandListSerializer(brands, many=True)
@@ -35,6 +48,20 @@ class BrandListView(APIView):
     
 
 class BrandByOwnerView(APIView):
+    @extend_schema(
+        summary="Listar marcas por titulares",
+        description="Filtra marcas cuyo nombre de titular contiene el texto proporcionado.",
+        parameters=[
+            OpenApiParameter(
+                name="owner",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Texto parcial del nombre del titular"
+            )
+        ],
+        responses={200: BrandListSerializer(many=True)},
+        tags=["Marcas"]
+    )
     def get(self, request):
         owner_query = request.query_params.get("owner", "").strip()
         brands = Brand.objects.select_related("owner")
@@ -47,6 +74,20 @@ class BrandByOwnerView(APIView):
     
 
 class BrandDeleteView(APIView):
+    @extend_schema(
+        summary="Eliminar una marca",
+        description="Elimina una marca por su ID. Si el titular asociado no tiene más marcas después de la eliminación, también se elimina automáticamente.",
+        parameters=[
+            OpenApiParameter(
+                name="brand_id",
+                type=int,
+                location=OpenApiParameter.PATH,
+                description="ID de la marca a eliminar"
+            )
+        ],
+        responses={200: None, 404: None},
+        tags=["Marcas"]
+    )
     def delete(self, request, brand_id):
         try:
             brand = Brand.objects.select_related("owner").get(id=brand_id)
@@ -62,6 +103,13 @@ class BrandDeleteView(APIView):
             return error_response(msg="Marca no encontrada", status_code=status.HTTP_404_NOT_FOUND)
     
 class BrandUpdateView(APIView):
+    @extend_schema(
+        summary="Actualizar marca",
+        description="Actualiza el nombre o estado de una marca por su ID. Los campos son opcionales.",
+        request=BrandUpdateSerializer,
+        responses={200: BrandSerializer, 400: None, 404: None},
+        tags=["Marcas"]
+    )
     def patch(self, request, brand_id):
         try:
             brand = Brand.objects.get(id=brand_id)
