@@ -32,3 +32,15 @@ class BrandListView(APIView):
         brands = Brand.objects.select_related("owner").all()
         serializer = BrandListSerializer(brands, many=True)
         return success_response(data=serializer.data)
+    
+
+class BrandByOwnerView(APIView):
+    def get(self, request):
+        owner_query = request.query_params.get("owner", "").strip()
+        brands = Brand.objects.select_related("owner")
+
+        if owner_query:
+            brands = brands.filter(owner__name__icontains=owner_query)
+
+        serializer = BrandListSerializer(brands, many=True)
+        return success_response(data=serializer.data)
