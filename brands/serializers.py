@@ -27,3 +27,17 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = ["name", "status", "owner_name"]
 
+
+class OwnerNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Owner
+        fields = ["id", "name"]
+
+class BrandListSerializer(serializers.ModelSerializer):
+    owner = OwnerNestedSerializer(read_only=True)
+
+    class Meta:
+        model = Brand
+        fields = ["id", "name", "owner"]
+
+

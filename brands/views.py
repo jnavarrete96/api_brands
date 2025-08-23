@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from .serializers import BrandCreateSerializer, BrandSerializer
+from .models import Brand
+from .serializers import BrandCreateSerializer, BrandSerializer, BrandListSerializer
 
 class BrandCreateView(APIView):
     def post(self, request):
@@ -24,3 +25,10 @@ class BrandCreateView(APIView):
                 {"error": e.detail},
                 status=status.HTTP_409_CONFLICT,
             )
+        
+
+class BrandListView(APIView):
+    def get(self, request):
+        brands = Brand.objects.select_related("owner").all()
+        serializer = BrandListSerializer(brands, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
