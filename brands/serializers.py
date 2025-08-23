@@ -6,6 +6,11 @@ class BrandCreateSerializer(serializers.Serializer):
     brand_name = serializers.CharField(max_length=255)
     owner_name = serializers.CharField(max_length=255)
 
+    def validate_brand_name(self, value):
+        if Brand.objects.filter(name=value).exists():
+            raise serializers.ValidationError("Ya existe una marca con ese nombre.")
+        return value
+
     def create(self, validated_data):
         owner, _ = Owner.objects.get_or_create(name=validated_data["owner_name"])
         brand = Brand.objects.create(
