@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from .models import Brand
-from .serializers import BrandCreateSerializer, BrandSerializer, BrandListSerializer
+from .serializers import BrandCreateSerializer, BrandSerializer, BrandListSerializer, BrandUpdateSerializer
 from .utils.responses import success_response, error_response
 
 class BrandCreateView(APIView):
@@ -60,3 +60,18 @@ class BrandDeleteView(APIView):
             return success_response(msg="Marca eliminada correctamente")
         except Brand.DoesNotExist:
             return error_response(msg="Marca no encontrada", status_code=status.HTTP_404_NOT_FOUND)
+    
+class BrandUpdateView(APIView):
+    def patch(self, request, brand_id):
+        try:
+            brand = Brand.objects.get(id=brand_id)
+        except Brand.DoesNotExist:
+            return error_response(msg="Marca no encontrada", status_code=status.HTTP_404_NOT_FOUND)
+
+        serializer = BrandUpdateSerializer(data=request.data, context={"brand_id": brand_id})
+        if serializer.is_valid():
+            updated_brand = serializer.update(brand, serializer.validated_data)
+            response_data = BrandSerializer(updated_brand).data
+            return success_response(data=response_data, msg="Marca actualizada correctamente")
+        else:
+            return error_response(errors=serializer.errors, msg="Error de validación", status_code=status.HTTP_400_BAD_REQUEST)

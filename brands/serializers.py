@@ -38,6 +38,23 @@ class BrandListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = ["id", "name", "owner"]
+        fields = ["id", "name","status", "owner"]
+
+
+class BrandUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255, required=False)
+    status = serializers.ChoiceField(choices=Brand.ESTADOS, required=False)
+
+    def validate_name(self, value):
+        brand_id = self.context.get("brand_id")
+        if Brand.objects.exclude(id=brand_id).filter(name=value).exists():
+            raise serializers.ValidationError("Ya existe una marca con ese nombre.")
+        return value
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 
