@@ -17,25 +17,25 @@ cd tu-repo
 2. Crea y activa un entorno virtual:
 
 ```bash
-   python -m venv venv
-   source venv/bin/activate        # Linux/macOS
-   venv\Scripts\activate           # Windows
+python -m venv venv
+source venv/bin/activate        # Linux/macOS
+venv\Scripts\activate           # Windows
 ```
 3. Instala las dependencias:
 
 ```bash
-   pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 4. Configura la base de datos en settings.py o usando variables de entorno.
 
 5. Ejecuta migraciones:
 
 ```bash
-   python manage.py migrate
+python manage.py migrate
 ```
 6. Inicia el servidor:
 ```bash
-   python manage.py runserver
+python manage.py runserver
 ```
 
 ---
@@ -57,7 +57,7 @@ También disponible en formato Redoc:
 Ejecuta las pruebas unitarias con:
 
 ```bash
-   python manage.py test brands
+python manage.py test brands
 ```
 
 ---
