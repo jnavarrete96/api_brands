@@ -33,7 +33,15 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 ```
-6. Inicia el servidor:
+6. Crea el archivo .env en la raíz del proyecto con tu configuración:
+```env
+DB_NAME=brands_db
+DB_USER=root
+DB_PASSWORD=admin
+DB_HOST=localhost
+DB_PORT=3306
+```
+7. Inicia el servidor:
 ```bash
 python manage.py runserver
 ```
