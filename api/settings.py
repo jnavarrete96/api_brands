@@ -33,12 +33,14 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    'drf_spectacular', 
+    'drf_spectacular',
+    'corsheaders', 
     'brands',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -119,3 +121,5 @@ SPECTACULAR_SETTINGS = {
         'name': 'MIT License',
     },
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
